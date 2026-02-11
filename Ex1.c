@@ -31,7 +31,7 @@ int main()
         /* Average Case - BLUE circle */
         setcolor(BLUE);
         circle(x, 400 - avg * 20, 3);
-        floodfill(x, 400 - avg * 20, BLUE)
+        floodfill(x, 400 - avg * 20, BLUE);
         /* Worst Case - RED circle */
         setcolor(RED);
         circle(x, 400 - worst * 20, 3);
