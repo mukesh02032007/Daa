@@ -1,4 +1,4 @@
-Linear Search #include <stdio.h>
+#include <stdio.h>
 #include <conio.h>
 #include <graphics.h>
 #include <time.h>
