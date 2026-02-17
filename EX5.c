@@ -2,90 +2,63 @@
 #include <conio.h>
 #include <graphics.h>
 #include <time.h>
-#define REPEAT 30000   /* Needed for non-zero time */
+#include <math.h>
+#define REP 30000
+int bs(int a[], int l, int h, int k)
+{
+    int m;
+    if (l <= h)
+    {
+        m = (l + h) / 2;
+        if (a[m] == k)
+            return m;
+        if (k < a[m])
+            return bs(a, l, m - 1, k);
+        return bs(a, m + 1, h, k);
+    }
+    return -1;
+}
 void main()
 {
-    int gd = DETECT, gm;
-    int arr[1000], i, n, idx = 0, r;
-    int x[10], yBest[10], yAvg[10], yWorst[10];
-    int key;
-    clock_t start, end;
-    double best, avg, worst;
+    int gd = DETECT, gm, a[1000], n, i, r, idx = 0;
+    int x[10], yB[10], yA[10], yW[10];
+    clock_t s, e;
+    double t;
     initgraph(&gd, &gm, "C:\\TURBOC3\\BGI");
-    /* Draw Axes */
-    setcolor(WHITE);
-    setlinestyle(SOLID_LINE, 0, 3);
     line(50, 400, 50, 50);
     line(50, 400, 600, 400);
-    outtextxy(60, 40, "Time (seconds)");
+    outtextxy(60, 40, "Time");
     outtextxy(480, 420, "Input Size (n)");
-    printf("n\tBest(s)\tAverage(s)\tWorst(s)\n");
-    printf("------------------------------------------\n");
-
+    printf("n\tTime(s)\n");
     for (n = 10; n <= 100; n += 10)
     {
         for (i = 0; i < n; i++)
-            arr[i] = i + 1;
-        /* BEST CASE */
-        key = arr[0];
-        start = clock();
-        for (r = 0; r < REPEAT; r++)
-        {
-            for (i = 0; i < n; i++)
-                if (arr[i] == key)
-                    break;
-        }
-        end = clock();
-        best = (double)(end - start) / CLOCKS_PER_SEC;
-        /* AVERAGE CASE */
-        key = arr[n / 2];
-        start = clock();
-        for (r = 0; r < REPEAT; r++)
-        {
-            for (i = 0; i < n; i++)
-                if (arr[i] == key)
-                    break;
-        }
-        end = clock();
-        avg = (double)(end - start) / CLOCKS_PER_SEC;
-        /* WORST CASE */
-        key = arr[n - 1];
-        start = clock();
-        for (r = 0; r < REPEAT; r++)
-        {
-            for (i = 0; i < n; i++)
-                if (arr[i] == key)
-                    break;
-        }
-        end = clock();
-        worst = (double)(end - start) / CLOCKS_PER_SEC;
-        printf("%d\t%f\t%f\t%f\n", n, best, avg, worst);
-        /* GRAPH VALUES — UNCHANGED */
+            a[i] = i + 1;
+        s = clock();
+        for (r = 0; r < REP; r++)
+            bs(a, 0, n - 1, a[n/2]);
+        e = clock();
+        t = (double)(e - s) / CLOCKS_PER_SEC;
+        printf("%d\t%f\n", n, t);
         x[idx] = 50 + n * 5;
-        yBest[idx]  = 380;
-        yAvg[idx]   = 400 - (n * 2);
-        yWorst[idx] = 400 - (n * 3);
+        yB[idx] = 350;                 /* Best O(1) */
+        yA[idx] = 350 - log(n) * 20;   /* Avg O(log n) */
+        yW[idx] = 350 - log(n) * 28;   /* Worst O(log n) */
+
         idx++;
     }
-    /* BEST CASE GRAPH */
     setcolor(GREEN);
     for (i = 0; i < idx - 1; i++)
-        line(x[i], yBest[i], x[i+1], yBest[i+1]);
-    /* AVERAGE CASE GRAPH */
+        line(x[i], yB[i], x[i+1], yB[i+1]);
     setcolor(BLUE);
     for (i = 0; i < idx - 1; i++)
-        line(x[i], yAvg[i], x[i+1], yAvg[i+1]);
-    /* WORST CASE GRAPH */
+        line(x[i], yA[i], x[i+1], yA[i+1]);
     setcolor(RED);
     for (i = 0; i < idx - 1; i++)
-        line(x[i], yWorst[i], x[i+1], yWorst[i+1]);
-    /* Legend */
-    setcolor(GREEN);
-    outtextxy(420, 80, "Best Case");
-    setcolor(BLUE);
-    outtextxy(420, 100, "Average Case");
-    setcolor(RED);
-    outtextxy(420, 120, "Worst Case");
+        line(x[i], yW[i], x[i+1], yW[i+1]);
+    outtextxy(420, 80, "Best");
+    outtextxy(420, 100, "Average");
+    outtextxy(420, 120, "Worst");
     getch();
     closegraph();
 }
