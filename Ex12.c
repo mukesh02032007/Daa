@@ -97,3 +97,20 @@ void main()
         printf("%d ",a[i]);
     getch();
 }
+
+
+--output--
+    Enter number of elements: 5
+Enter elements:
+8 3 6 1 9
+
+Time taken for Merge Sort = 0.0000
+Sorted array:
+1 3 6 8 9
+
+Enter elements again:
+8 3 6 1 9
+
+Time taken for Quick Sort = 0.0000
+Sorted array:
+1 3 6 8 9
