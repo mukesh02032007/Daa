@@ -60,4 +60,10 @@ void main()
     getch();
 }
 
+--output--
+    Enter number of elements: 5
+Enter the elements:
+10 3 45 7 21
 
+Minimum element = 3
+Maximum element = 45
