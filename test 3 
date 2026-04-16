@@ -1,0 +1,334 @@
+#include <stdio.h>
+
+void maxmin(int a[], int low, int high, int *max, int *min)
+{
+    int mid, max1, min1;
+
+    if (low == high) // only one element
+    {
+        *max = *min = a[low];
+    }
+    else if (high == low + 1) // two elements
+    {
+        if (a[low] > a[high])
+        {
+            *max = a[low];
+            *min = a[high];
+        }
+        else
+        {
+            *max = a[high];
+            *min = a[low];
+        }
+    }
+    else
+    {
+        mid = (low + high) / 2;
+
+        maxmin(a, low, mid, max, min);
+        maxmin(a, mid + 1, high, &max1, &min1);
+
+        if (*max < max1)
+            *max = max1;
+        if (*min > min1)
+            *min = min1;
+    }
+}
+
+void main()
+{
+    int a[50], n, i, max, min;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter elements:\n");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    maxmin(a, 0, n - 1, &max, &min);
+
+    printf("Maximum = %d\n", max);
+    printf("Minimum = %d\n", min);
+}
+
+
+
+#include <stdio.h>
+#include <time.h>
+
+void merge(int a[], int low, int mid, int high)
+{
+    int i = low, j = mid + 1, k = low, temp[50];
+
+    while (i <= mid && j <= high)
+    {
+        if (a[i] < a[j])
+            temp[k++] = a[i++];
+        else
+            temp[k++] = a[j++];
+    }
+
+    while (i <= mid)
+        temp[k++] = a[i++];
+
+    while (j <= high)
+        temp[k++] = a[j++];
+
+    for (i = low; i <= high; i++)
+        a[i] = temp[i];
+}
+
+void mergesort(int a[], int low, int high)
+{
+    int mid;
+    if (low < high)
+    {
+        mid = (low + high) / 2;
+        mergesort(a, low, mid);
+        mergesort(a, mid + 1, high);
+        merge(a, low, mid, high);
+    }
+}
+
+void main()
+{
+    int a[50], n, i;
+    clock_t start, end;
+
+    printf("Enter n: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    start = clock();
+    mergesort(a, 0, n - 1);
+    end = clock();
+
+    printf("Sorted array:\n");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    printf("\nTime = %f", (double)(end - start) / CLOCKS_PER_SEC);
+}
+
+
+
+#include <stdio.h>
+#include <time.h>
+
+int partition(int a[], int low, int high)
+{
+    int pivot = a[low], i = low + 1, j = high, temp;
+
+    while (i <= j)
+    {
+        while (a[i] <= pivot && i <= high)
+            i++;
+        while (a[j] > pivot)
+            j--;
+
+        if (i < j)
+        {
+            temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+        }
+    }
+
+    a[low] = a[j];
+    a[j] = pivot;
+
+    return j;
+}
+
+void quicksort(int a[], int low, int high)
+{
+    int pos;
+    if (low < high)
+    {
+        pos = partition(a, low, high);
+        quicksort(a, low, pos - 1);
+        quicksort(a, pos + 1, high);
+    }
+}
+
+void main()
+{
+    int a[50], n, i;
+    clock_t start, end;
+
+    printf("Enter n: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    start = clock();
+    quicksort(a, 0, n - 1);
+    end = clock();
+
+    printf("Sorted array:\n");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    printf("\nTime = %f", (double)(end - start) / CLOCKS_PER_SEC);
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int x[10], count = 0;
+
+int place(int k, int i)
+{
+    int j;
+    for (j = 1; j < k; j++)
+    {
+        if (x[j] == i || abs(x[j] - i) == abs(j - k))
+            return 0;
+    }
+    return 1;
+}
+
+void nqueen(int k, int n)
+{
+    int i, j;
+    for (i = 1; i <= n; i++)
+    {
+        if (place(k, i))
+        {
+            x[k] = i;
+
+            if (k == n)
+            {
+                count++;
+                printf("\nSolution %d:\n", count);
+                for (j = 1; j <= n; j++)
+                    printf("%d ", x[j]);
+            }
+            else
+                nqueen(k + 1, n);
+        }
+    }
+}
+
+void main()
+{
+    int n;
+    printf("Enter n: ");
+    scanf("%d", &n);
+
+    nqueen(1, n);
+}
+
+
+#include <stdio.h>
+
+int cost[10][10], visited[10], n;
+
+int min(int i)
+{
+    int j, next = -1, min = 999;
+
+    for (j = 0; j < n; j++)
+    {
+        if (cost[i][j] != 0 && visited[j] == 0)
+        {
+            if (cost[i][j] < min)
+            {
+                min = cost[i][j];
+                next = j;
+            }
+        }
+    }
+    return next;
+}
+
+void tsp(int city)
+{
+    int next;
+    visited[city] = 1;
+    printf("%d -> ", city);
+
+    next = min(city);
+
+    if (next == -1)
+        return;
+
+    tsp(next);
+}
+
+void main()
+{
+    int i, j;
+
+    printf("Enter number of cities: ");
+    scanf("%d", &n);
+
+    printf("Enter cost matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &cost[i][j]);
+
+    tsp(0);
+}
+
+
+
+#include <stdio.h>
+
+int partition(int a[], int low, int high)
+{
+    int pivot = a[low], i = low + 1, j = high, temp;
+
+    while (i <= j)
+    {
+        while (a[i] <= pivot && i <= high)
+            i++;
+        while (a[j] > pivot)
+            j--;
+
+        if (i < j)
+        {
+            temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+        }
+    }
+
+    a[low] = a[j];
+    a[j] = pivot;
+
+    return j;
+}
+
+int kthsmall(int a[], int low, int high, int k)
+{
+    int pos = partition(a, low, high);
+
+    if (pos == k - 1)
+        return a[pos];
+    else if (pos > k - 1)
+        return kthsmall(a, low, pos - 1, k);
+    else
+        return kthsmall(a, pos + 1, high, k);
+}
+
+void main()
+{
+    int a[50], n, i, k;
+
+    printf("Enter n: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter k: ");
+    scanf("%d", &k);
+
+    printf("Kth smallest = %d", kthsmall(a, 0, n - 1, k));
+}
